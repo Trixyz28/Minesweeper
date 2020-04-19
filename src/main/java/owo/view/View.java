@@ -12,49 +12,48 @@ public class View extends Observable implements Runnable, Observer {
     private Scanner scanner;
     private boolean endGame;
 
+    private int row;
+    private int column;
+    private int mineNumber;
+
+
     public View() {
         scanner = new Scanner(System.in);
         endGame = false;
     }
 
 
-    private int row;
+
     public int getRow() {
         return row;
     }
 
-    private int column;
     public int getColumn() {
         return column;
     }
 
-    private int mine;
     public int getMine() {
-        return mine;
+        return mineNumber;
     }
 
 
     public void setGame() {
-        System.out.println("Set the number of rows: (5-16)");
-        row = scanner.nextInt();
-        while(row<5 || row>16) {
-            System.out.println("Insert a number between 5 and 16");
+        do {
+            System.out.println("Set the number of rows: (5-16)");
             row = scanner.nextInt();
-        }
+        } while (row<5 || row>16);
 
-
-        System.out.println("Set the number of columns: (5-30)");
-        column = scanner.nextInt();
-        while(column<5 || column>30) {
-            System.out.println("Insert a number between 5 and 30");
+        do {
+            System.out.println("Set the number of columns: (5-30)");
             column = scanner.nextInt();
-        }
+        } while (column<5 || column>30);
+
 
         System.out.println("Set the number of mines");
-        mine = scanner.nextInt();
-        while(mine<1 || mine>row*column) {
+        mineNumber = scanner.nextInt();
+        while(mineNumber<1 || mineNumber>row*column) {
             System.out.println("Error! Please control the number of mines");
-            mine = scanner.nextInt();
+            mineNumber = scanner.nextInt();
         }
 
         setChanged();
@@ -88,13 +87,13 @@ public class View extends Observable implements Runnable, Observer {
 
 
         int position = scanner.nextInt();
-        while(position <0 || position >=row*column) {
+        while(position <=0 || position >row*column) {
             System.out.println("Control the selected tile");
             position = scanner.nextInt();
         }
 
         setChanged();
-        notifyObservers(new Move(operation, position));
+        notifyObservers(new Move(operation, position-1));
     }
 
 
@@ -106,6 +105,7 @@ public class View extends Observable implements Runnable, Observer {
         }
     }
 
+
     @Override
     public void update(Observable o, Object arg) {
         if(!(o instanceof Model) || !(arg instanceof Board)) {
@@ -115,10 +115,11 @@ public class View extends Observable implements Runnable, Observer {
     }
 
 
+
     public void print(Board board) {
 
         for(int i=0;i<row;i++) {
-            System.out.print("|");
+            System.out.print(Colors.BLACK_BRIGHT + "|" + Colors.RESET);
 
             for(int j=0;j<column;j++) {
 
@@ -127,7 +128,7 @@ public class View extends Observable implements Runnable, Observer {
                 if(t.isOpened()) {
 
                     if (t.isMined()) {
-                        System.out.print(Colors.RED + "  *");
+                        System.out.print(Colors.RED_BOLD + "  *");
                     } else {
                         switch (t.getMineAround()) {
 
@@ -136,7 +137,7 @@ public class View extends Observable implements Runnable, Observer {
                                 break;
 
                             case 1:
-                                System.out.print(Colors.GREEN);
+                                System.out.print(Colors.BLUE);
                                 System.out.format("%3d", t.getMineAround());
                                 break;
 
@@ -146,7 +147,7 @@ public class View extends Observable implements Runnable, Observer {
                                 break;
 
                             case 3:
-                                System.out.print(Colors.BLUE);
+                                System.out.print(Colors.CYAN);
                                 System.out.format("%3d", t.getMineAround());
                                 break;
 
@@ -159,23 +160,21 @@ public class View extends Observable implements Runnable, Observer {
                 }
 
                 if(!t.isOpened() && t.isSigned()) {
-                    System.out.print(Colors.CYAN + "  !");
+                    System.out.print(Colors.RED_BOLD_BRIGHT + "  !");
                 }
 
                 if(!t.isOpened() && !t.isSigned()) {
-                    System.out.format("%3d",i*column+j);
+                    System.out.format("%3d",i*column+j+1);
                 }
 
-                System.out.print(Colors.RESET + "|");
+                System.out.print(Colors.BLACK_BRIGHT + "|" + Colors.RESET);
             }
 
-            System.out.println("");
+            System.out.println();
         }
 
-        System.out.println("");
+        System.out.println();
     }
-
-
 
 
     public void declareInvalid() {

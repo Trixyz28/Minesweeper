@@ -2,6 +2,7 @@ package owo.model;
 
 import java.util.Random;
 
+
 public class Board {
 
     private Tile[][] board;
@@ -85,10 +86,6 @@ public class Board {
     public Tile getTile(int row,int column) {
         return board[row][column];
     }
-
-
-
-
 
 
 

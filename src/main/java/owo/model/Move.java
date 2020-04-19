@@ -1,5 +1,6 @@
 package owo.model;
 
+
 public class Move {
 
     private int operation;

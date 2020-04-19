@@ -7,6 +7,7 @@ import owo.view.View;
 import java.util.Observable;
 import java.util.Observer;
 
+
 public class Controller implements Observer {
 
     private Model model;
@@ -25,12 +26,8 @@ public class Controller implements Observer {
         }
 
         if(arg.equals("setup")) {
-            int row = view.getRow();
-            int column = view.getColumn();
-            int mineNumber = view.getMine();
-
-            model.initializeBoard(row,column);
-            model.initializeMines(mineNumber);
+            model.initializeBoard(view.getRow(),view.getColumn());
+            model.initializeMines(view.getMine());
         }
 
 
@@ -46,6 +43,8 @@ public class Controller implements Observer {
                 case 1:
                     if(model.canOp(row,column)) {
                         model.openTile(row,column);
+                        model.recursiveOpen(row,column);
+                        model.endOperation();
                     } else {
                         view.declareInvalid();
                         return;
@@ -57,7 +56,8 @@ public class Controller implements Observer {
                         view.declareLose();
                     }
 
-                    if(model.checkWin()) {
+                    if(!model.checkLose(row,column) && model.checkWin()) {
+                        model.openAll();
                         view.declareWin();
                     }
 

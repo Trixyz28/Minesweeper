@@ -3,6 +3,10 @@ package owo.model;
 public class Tile {
 
     private boolean opened;
+    private boolean mined;
+    private boolean signed;
+    private int mineAround;
+
 
     public boolean isOpened() {
         return opened;
@@ -12,8 +16,6 @@ public class Tile {
     }
 
 
-    private boolean mined;
-
     public boolean isMined() {
         return mined;
     }
@@ -22,7 +24,6 @@ public class Tile {
     }
 
 
-    private boolean signed;
     public boolean isSigned() {
         return signed;
     }
@@ -31,14 +32,11 @@ public class Tile {
     }
 
 
-    private int mineAround;
-
     public int getMineAround() {
         return mineAround;
     }
     public void setMineAround(int mineAround) {
         this.mineAround = mineAround;
     }
-
 
 }

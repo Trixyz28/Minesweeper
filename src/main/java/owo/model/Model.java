@@ -2,6 +2,7 @@ package owo.model;
 
 import java.util.Observable;
 
+
 public class Model extends Observable {
 
     private Board board;
@@ -22,71 +23,65 @@ public class Model extends Observable {
             }
         }
 
-
-        setChanged();
-        notifyObservers(board);
+        endOperation();
     }
 
 
     public boolean canOp(int row, int col){
-        if(board.getTile(row,col).isOpened() || board.getTile(row,col).isSigned()) {
-            return false;
-        }
-        return true;
+        return (!board.getTile(row,col).isOpened() && !board.getTile(row,col).isSigned());
     }
 
     public boolean canRemove(int row,int col) {
-        if(!board.getTile(row,col).isSigned()) {
-            return false;
-        }
-        return true;
+        return board.getTile(row,col).isSigned();
     }
 
 
     public void openTile(int row,int col) {
         board.getTile(row,col).setOpened(true);
         openTiles++;
-
-        setChanged();
-        notifyObservers(board);
     }
 
     public void placeFlag(int row,int col) {
         board.getTile(row,col).setSigned(true);
 
-        setChanged();
-        notifyObservers(board);
+        endOperation();
     }
 
     public void removeFlag(int row,int col) {
         board.getTile(row,col).setSigned(false);
 
-        setChanged();
-        notifyObservers(board);
+        endOperation();
     }
 
 
     public boolean checkLose(int row,int col) {
-        if(board.getTile(row,col).isOpened() && board.getTile(row,col).isMined()) {
-            return true;
-        }
-        return false;
+        return (board.getTile(row,col).isOpened() && board.getTile(row,col).isMined());
     }
 
 
     public boolean checkWin() {
-        if(openTiles == board.getRow()*board.getColumn()-board.getMineNumber()) {
-            return true;
-        }
-        return false;
+        return (openTiles == board.getRow() * board.getColumn() - board.getMineNumber());
     }
 
 
     public void recursiveOpen(int row,int col) {
 
+        if(board.getTile(row,col).getMineAround() == 0) {
 
+            for(int i=-1;i<2 && i+row<board.getRow();i++) {
+                for(int j=-1;j<2 && j+col<board.getColumn();j++) {
+
+                    if(i+row>=0 && j+col>=0 && (i!=0 || j!=0)) {
+
+                        if(!board.getTile(i+row,j+col).isOpened() && !board.getTile(i+row,j+col).isSigned()) {
+                            openTile(i+row,j+col);
+                            recursiveOpen(i+row,j+col);
+                        }
+                    }
+                }
+            }
+        }
     }
-
 
 
 
@@ -97,10 +92,13 @@ public class Model extends Observable {
                 board.getTile(i,j).setOpened(true);
             }
         }
+        endOperation();
+    }
 
+
+    public void endOperation() {
         setChanged();
         notifyObservers(board);
     }
-
 
 }
